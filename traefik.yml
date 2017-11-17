@@ -18,7 +18,7 @@ services:
         protocol: tcp
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - /docker/share/git_clone/docker-swarm/git_clone/docker-swarm/traefik.toml:/traefik.toml:ro
+      - /docker/share/git_clone/docker-swarm/traefik.toml:/traefik.toml:ro
       - /docker/share/traefik/acme.json:/acme.json
     labels:
       - "traefik.enable=false"
