@@ -19,7 +19,7 @@ chmod +x /usr/local/bin/docker-compose
 
 # install and configure gluster
 mkdir -p /glusterfs
-gluster peer probe vps3.cretinon.fr
+gluster peer probe vps5.cretinon.fr
 echo "localhost:/docker /docker/share glusterfs defaults,_netdev 0 0" >> /etc/fstab
 mkdir -p /docker/share
 mount /docker/share
