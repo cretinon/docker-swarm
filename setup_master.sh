@@ -60,4 +60,5 @@ mkdir -p /docker/share/logstash/pipeline/
 mkdir -p /docker/share/kibana/config/
 cp /docker/share/git_clone/docker-swarm/kibana.yml /docker/share/kibana/config/
 cp /docker/share/git_clone/docker-swarm/logstash.yml /docker/share/logstash/config/
+cp /docker/share/git_clone/docker-swarm/logstash.conf /docker/share/logstash/pipeline/
 docker stack deploy elk --compose-file /docker/share/git_clone/docker-swarm/elk.yml
