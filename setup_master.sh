@@ -54,6 +54,7 @@ touch /docker/share/traefik/acme.json
 docker stack deploy traefik --compose-file /docker/share/git_clone/docker-swarm/traefik.yml
 
 # install elk
+sysctl -w vm.max_map_count=262144
 mkdir -p /docker/share/logstash/config/
 mkdir -p /docker/share/logstash/pipeline/
 mkdir -p /docker/share/kibana/config/

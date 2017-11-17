@@ -33,3 +33,7 @@ systemctl restart docker
 # start swarm
 while [ ! -x /docker/share/swarm/join_as_manager.sh ]; do echo "waiting swarm" ; sleep 10 ; done
 /docker/share/swarm/join_as_manager.sh
+
+# elk prereq
+sysctl -w vm.max_map_count=262144
+
