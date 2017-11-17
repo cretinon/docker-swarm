@@ -1,0 +1,34 @@
+checkNewVersion = true
+defaultEntryPoints = ["http", "https"]
+
+# This section enable LetsEncrypt automatic certificate generation / renewal
+[acme]
+email = "jacques@cretinon.fr"
+storage = "acme.json" # or "traefik/acme/account" if using KV store
+entryPoint = "https"
+acmeLogging = true
+onDemand = true
+OnHostRule = true
+
+[[acme.domains]]
+  main = "cretinon.fr"
+
+# Redirect all HTTP to HTTPS (why wouldn't you?)
+[entryPoints]
+  [entryPoints.http]
+  address = ":80"
+    [entryPoints.http.redirect]
+      entryPoint = "https"
+  [entryPoints.https]
+  address = ":443"
+    [entryPoints.https.tls]
+
+[web]
+address = ":8080"
+watch = true
+
+[docker]
+endpoint = "tcp://127.0.0.1:2375"
+domain = "cretinon.fr"
+watch = true
+swarmmode = true
