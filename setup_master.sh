@@ -57,4 +57,5 @@ docker stack deploy traefik --compose-file /docker/share/git_clone/docker-swarm/
 mkdir -p /docker/share/logstash/config/
 mkdir -p /docker/share/logstash/pipeline/
 mkdir -p /docker/share/kibana/config/
+cp /docker/share/git_clone/docker-swarm/kibana.yml /docker/share/kibana/config/
 docker stack deploy elk --compose-file /docker/share/git_clone/docker-swarm/elk.yml
