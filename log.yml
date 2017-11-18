@@ -1,0 +1,21 @@
+version: "3"
+
+services:
+  logspout:
+    image: bekt/logspout-logstash
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      ROUTE_URIS: 'logstash://logstash:5000'
+    networks:
+      - elk
+    deploy:
+      mode: global
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+
+networks:
+  elk:
+    external:
+      name: elk_backend

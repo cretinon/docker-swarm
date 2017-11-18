@@ -58,7 +58,17 @@ sysctl -w vm.max_map_count=262144
 mkdir -p /docker/share/logstash/config/
 mkdir -p /docker/share/logstash/pipeline/
 mkdir -p /docker/share/kibana/config/
+mkdir -p /docker/share/elasticsearch/data
+chown debian:debian /docker/share/elasticsearch/data/
 cp /docker/share/git_clone/docker-swarm/kibana.yml /docker/share/kibana/config/
 cp /docker/share/git_clone/docker-swarm/logstash.yml /docker/share/logstash/config/
 cp /docker/share/git_clone/docker-swarm/logstash.conf /docker/share/logstash/pipeline/
 docker stack deploy elk --compose-file /docker/share/git_clone/docker-swarm/elk.yml
+
+# install galera
+mkdir -p /docker/local/mysql/lib
+mkdir -p /docker/local/mysql/node1/lib
+mkdir -p /docker/local/mysql/node2/lib
+mkdir -p /docker/local/mysql/node3/lib
+docker network create --driver overlay galera_network
+docker stack deploy galera  --compose-file /docker/share/git_clone/docker-swarm/galera.yml

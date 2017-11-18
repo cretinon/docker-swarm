@@ -2,13 +2,13 @@ version: "3"
 
 services:
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:5.6.4
+    image: docker.elastic.co/elasticsearch/elasticsearch:5.2.2
     ports:
       - "9200:9200"
       - "9300:9300"
     environment:
+      cluster.name: "elk-cluster"
       ES_JAVA_OPTS: "-Xmx256m -Xms256m"
-      discovery.zen.ping.unicast.hosts: "elasticsearch"
       # disable X-Pack
       # see https://www.elastic.co/guide/en/x-pack/current/xpack-settings.html
       #     https://www.elastic.co/guide/en/x-pack/current/installing-xpack.html#xpack-enabling
@@ -16,18 +16,19 @@ services:
       xpack.monitoring.enabled: "false"
       xpack.graph.enabled: "false"
       xpack.watcher.enabled: "false"
-      cluster.name: "docker-cluster"
-      bootstrap.memory_lock: "true"
+      LOGSPOUT: "ignore"
     volumes:
-      - /docker/share/elasticsearch:/usr/share/elasticsearch/data
+      - /docker/share/elasticsearch/data:/usr/share/elasticsearch/data
     networks:
-      - backend
+      backend:
+        aliases:
+          - elk
     deploy:
       mode: replicated
       replicas: 1
 
   logstash:
-    image: docker.elastic.co/logstash/logstash:5.6.4
+    image: docker.elastic.co/logstash/logstash:5.2.2
     volumes:
       - /docker/share/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
       - /docker/share/logstash/pipeline:/usr/share/logstash/pipeline
@@ -35,6 +36,7 @@ services:
       - "5000:5000"
     environment:
       LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+      LOGSPOUT: "ignore"
     networks:
       - backend
     depends_on:
@@ -44,7 +46,7 @@ services:
       replicas: 1
 
   kibana:
-    image: docker.elastic.co/kibana/kibana:5.6.4
+    image: docker.elastic.co/kibana/kibana:5.2.2
     volumes:
       - /docker/share/kibana/config:/usr/share/kibana/config
     ports:
@@ -53,6 +55,8 @@ services:
       - backend
     depends_on:
       - elasticsearch
+    environment:
+      LOGSPOUT: "ignore"
     deploy:
       mode: replicated
       replicas: 1

@@ -1,0 +1,79 @@
+version: "3"
+
+networks:
+  monitoring:
+  elk:
+    external:
+      name: elk_backend
+
+
+
+services:
+  cadvisor:
+    image: google/cadvisor
+    networks:
+      - monitoring
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock,readonly
+      - /:/rootfs
+      - /var/run:/var/run
+      - /sys:/sys
+      - /var/lib/docker/:/var/lib/docker
+    deploy:
+      mode: global
+
+  node-exporter:
+    image: basi/node-exporter:${NODE_EXPORTER_VERSION:-v1.13.0}
+    networks:
+      - monitoring
+    volumes:
+      - /proc:/host/proc
+      - /sys:/host/sys
+      - /:/rootfs
+      - /etc/hostname:/etc/host_hostname
+    environment:
+      HOST_HOSTNAME: /etc/host_hostname
+    command: -collector.procfs "/host/proc" -collector.sysfs /host/sys -collector.textfile.directory /etc/node-exporter/ -collectors.enabled 'conntrack,diskstats,entropy,filefd,filesystem,loadavg,mdadm,meminfo,netdev,netstat,stat,textfile,time,vmstat,ipvs' # -collector.filesystem.ignored-mount-points "^/(sys|proc|dev|host|etc)($|/)"
+    deploy:
+      mode: global
+
+
+  alertmanager:
+    image: basi/alertmanager:${ALERTMANAGER_VERSION:-v0.1.0}
+    networks:
+      - monitoring
+      # - logging
+    ports:
+     - "9093:9093"
+    environment:
+      SLACK_API: ${SLACK_API:-YOURTOKENGOESHERE}
+      LOGSTASH_URL: http://logstash:8080/
+    command: -config.file=/etc/alertmanager/config.yml
+    deploy:
+      mode: replicated
+      replicas: 1
+
+  prometheus:
+    image: basi/prometheus-swarm:${PROMETHEUS_SWARM_VERSION:-v0.4.1}
+    ports:
+      - "9090"
+    networks:
+      - monitoring
+    command: -config.file=/etc/prometheus/prometheus.yml -storage.local.path=/prometheus -web.console.libraries=/etc/prometheus/console_libraries -web.console.templates=/etc/prometheus/consoles -alertmanager.url=http://alertmanager:9093
+    deploy:
+      mode: replicated
+      replicas: 1
+  
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    networks:
+      - monitoring
+      - elk
+    volumes:
+      - /docker/share/grafana:/var/lib/grafana
+    environment:
+      PROMETHEUS_ENDPOINT: http://prometheus:9090
+    deploy:
+      mode: replicated

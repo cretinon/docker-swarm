@@ -37,3 +37,9 @@ while [ ! -x /docker/share/swarm/join_as_manager.sh ]; do echo "waiting swarm" ;
 # elk prereq
 sysctl -w vm.max_map_count=262144
 
+# galera prereq
+mkdir -p /docker/local/mysql/lib/
+mkdir -p /docker/local/mysql/node1/lib
+mkdir -p /docker/local/mysql/node2/lib
+mkdir -p /docker/local/mysql/node3/lib
+
