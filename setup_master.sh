@@ -19,8 +19,8 @@ chmod +x /usr/local/bin/docker-compose
 
 # install and configure gluster
 mkdir -p /glusterfs
-gluster volume create docker replica 2 transport tcp vps5.cretinon.fr:/glusterfs/docker vps6.cretinon.fr:/glusterfs/docker force
-while [ $? -eq 1 ]; do sleep 10 ; gluster volume create docker replica 2 transport tcp vps5.cretinon.fr:/glusterfs/docker vps6.cretinon.fr:/glusterfs/docker force ; done
+gluster volume create docker replica 2 transport tcp $1:/glusterfs/docker $2:/glusterfs/docker force
+while [ $? -eq 1 ]; do sleep 10 ; gluster volume create docker replica 2 transport tcp $1:/glusterfs/docker $2:/glusterfs/docker force ; done
 gluster volume start docker
 echo "localhost:/docker /docker/share glusterfs defaults,_netdev 0 0" >> /etc/fstab
 mkdir -p /docker/share
