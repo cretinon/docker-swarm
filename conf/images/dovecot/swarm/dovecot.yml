@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  dovecot:
+    image: localhost:5001/dovecot
+    ports:
+      - "53:53"
+      - "53:53/udp"
+    networks:
+      - bind-net
+    environment:
+      - BIND9_IP=167.114.242.58
+      - BIND9_ROOTDOMAIN=cretinon.fr
+      - BIND9_KEYNAME=secret
+      - BIND9_KEY_ALGORITHM=hmac-md5
+      - BIND9_KEY=c2VjcmV0
+      - BIND9_FORWARDERS=8.8.8.8;8.8.4.4;
+      - BIND9_TRANSFER=149.202.162.6;10.255.0.0/24;
+      - BIND9_DATADIR=/data
+    volumes:
+      - /docker/share/bind:/data
+ #     - /docker/share/bind/var:/var/run/named
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+networks:
+  bind-net:
+

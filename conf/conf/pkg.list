@@ -1,0 +1,7 @@
+apt-show-versions 
+curl 
+git 
+dnsutils 
+lsof 
+lvm2 
+glusterfs-server
