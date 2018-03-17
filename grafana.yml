@@ -4,24 +4,14 @@ networks:
   prometheus:
     external:
       name: prometheus_backend
+  elk:
+    external:
+      name: elk_backend
   traefik:
     external:
       name: traefik_public
 
 services:
-  cadvisor:
-    image: google/cadvisor
-    networks:
-      - monitoring
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock,readonly
-      - /:/rootfs
-      - /var/run:/var/run
-      - /sys:/sys
-      - /var/lib/docker/:/var/lib/docker
-    deploy:
-      mode: global
-
   grafana:
     image: grafana/grafana
     ports:
@@ -29,15 +19,16 @@ services:
     networks:
       - prometheus
       - traefik
+      - elk
     volumes:
       - /docker/share/grafana:/var/lib/grafana
     environment:
-      - PROMETHEUS_ENDPOINT: http://prometheus:9090
-      - GF_SERVER_ROOT_URL: http://grafana.cretinon.fr
+      - PROMETHEUS_ENDPOINT=http://prometheus:9090
+      - GF_SERVER_ROOT_URL=http://grafana.cretinon.fr
+    labels:
       - "traefik.backend.loadbalancer.swarm=true"
       - "traefik.port=80"
       - "traefik.frontend.rule=Host:grafana.cretinon.fr"
       - "traefik.docker.network=traefik_public"
-
     deploy:
       mode: replicated

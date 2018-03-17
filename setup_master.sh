@@ -10,7 +10,7 @@ chmod 0600 /swap
 swapon /swap
 
 # update and install debian
-apt-get update ; apt-get -y install curl git lsof lvm2 glusterfs-server; apt-get clean ;
+apt-get update ; apt-get -y install apt-show-versions curl git dnsutils lsof lvm2 glusterfs-server; apt-get clean ;
 
 # install docker and docker-compose
 curl -sSL https://get.docker.com | sh ;
@@ -59,6 +59,7 @@ mkdir -p /docker/share/logstash/config/
 mkdir -p /docker/share/logstash/pipeline/
 mkdir -p /docker/share/kibana/config/
 mkdir -p /docker/share/elasticsearch/data
+mkdir -p /docker/share/prometheus/alertmanager/
 chown debian:debian /docker/share/elasticsearch/data/
 cp /docker/share/git_clone/docker-swarm/kibana.yml /docker/share/kibana/config/
 cp /docker/share/git_clone/docker-swarm/logstash.yml /docker/share/logstash/config/

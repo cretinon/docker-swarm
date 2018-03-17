@@ -1,9 +1,21 @@
 version: "3.2"
 
+
+networks:
+  public:
+    driver: overlay
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.1.0.0/24
+  prometheus:
+    external:
+      name: prometheus_backend
+
 services:
   traefik:
     image: traefik
-    command: --web --docker --docker.swarmmode --docker.watch --docker.domain=cretinon.fr --logLevel=DEBUG
+    command: --web --docker --docker.swarmmode --docker.watch --docker.domain=cretinon.fr --web.metrics --web.metrics.prometheus 
     ports:
       - target: 80
         published: 80
@@ -24,17 +36,11 @@ services:
       - "traefik.enable=false"
     networks:
       - public
+      - prometheus
     deploy:
-      mode: global
+      mode: replicated
+      replicas: 1
       placement:
         constraints: [node.role == manager]
       restart_policy:
         condition: on-failure
-
-networks:
-  public:
-    driver: overlay
-    ipam:
-      driver: default
-      config:
-      - subnet: 10.1.0.0/24

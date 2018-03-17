@@ -1,0 +1,46 @@
+version: '3.2'
+services:
+  mysql_mgmt:
+    image: mysql/mysql-cluster
+    deploy:
+      replicas: 1
+      endpoint_mode: dnsrr
+    networks:
+      mysql_private:
+    hostname: mysql_mgmt
+    command: ndb_mgmd --config-cache=FALSE
+    volumes:
+      - /docker/local/mysql/mgmt/varlib:/var/lib/mysql
+      - /docker/share/git_clone/docker-swarm/tmp/pa_mysql-cluster.cnf:/etc/mysql-cluster.cnf
+      - /docker/share/git_clone/docker-swarm/tmp/pa_mysql_cnf:/etc/my.cnf
+
+  mysql_data1:
+    image: mysql/mysql-cluster
+    deploy:
+      replicas: 1
+      endpoint_mode: dnsrr
+    networks:
+      mysql_private:
+    hostname: mysql_data1
+    command: ndbd
+    volumes:
+      - /docker/local/mysql/data1/varlib:/var/lib/mysql
+      - /docker/share/git_clone/docker-swarm/tmp/pa_mysql_cnf:/etc/my.cnf
+
+
+  mysql_data2:
+    image: mysql/mysql-cluster
+    deploy:
+      replicas: 1
+      endpoint_mode: dnsrr
+    networks:
+      mysql_private:
+    command: ndbd
+    hostname: mysql_data2
+    volumes:
+      - /docker/local/mysql/data2/varlib:/var/lib/mysql
+      - /docker/share/git_clone/docker-swarm/tmp/pa_mysql_cnf:/etc/my.cnf
+
+
+networks:
+  mysql_private:

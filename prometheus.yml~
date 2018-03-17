@@ -1,0 +1,78 @@
+version: "3"
+
+networks:
+  backend:
+    driver: overlay
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.4.0.0/24
+  elk:
+    external:
+      name: elk_backend
+
+
+
+services:
+  node-exporter:
+    image: prom/node-exporter
+    networks:
+      - backend
+    volumes:
+      - /proc:/host/proc
+      - /sys:/host/sys
+      - /:/rootfs
+    environment:
+      HOST_HOSTNAME: /etc/hostname
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.ignored-mount-points="^(/rootfs|/host|)/(sys|proc|dev|host|etc)($$|/)"'
+      - '--collector.filesystem.ignored-fs-types="^(sys|proc|auto|cgroup|devpts|ns|au|fuse\.lxc|mqueue)(fs|)$$"'
+#      - '--collectors.enabled="conntrack,diskstats,entropy,filefd,filesystem,loadavg,mdadm,meminfo,netdev,netstat,stat,textfile,time,vmstat,ipvs"'
+    hostname: "{{.Node.ID}}"
+    deploy:
+      mode: global
+
+  alertmanager:
+    image: prom/alertmanager
+    networks:
+      - backend
+      - elk 
+    ports:
+     - "9093:9093"
+    environment:
+      LOGSTASH_URL: http://logstash:5000/
+    volumes:
+      - /docker/share/prometheus/alertmanager/alertmanager.yml:/etc/alertmanager/config.yml
+    deploy:
+      mode: replicated
+      replicas: 1
+
+#  influx:
+#    image: influxdb
+#    volumes:
+#      - /docker/share/prometheus/influx:/var/lib/influxdb
+#    networks:
+#      backend:
+#        aliases:
+#          - influx_prom
+#    deploy:
+#      replicas: 1
+#      placement:
+#        constraints:
+#          - node.role == manager
+
+  prometheus:
+    image: quay.io/prometheus/prometheus
+    ports:
+      - "9090"
+    volumes:
+      - /docker/share/prometheus/prometheus/etc/:/etc/prometheus/
+    networks:
+      backend:
+        aliases:
+          - prometheus
+    deploy:
+      mode: replicated
+      replicas: 1

@@ -1,0 +1,14 @@
+# Enable the ndbcluster storage engine
+# Provide the connection string for management server hosts
+# See https://dev.mysql.com/doc/refman/5.7/en/mysql-cluster-config-starting.html for other settings
+[mysqld]
+ndbcluster
+ndb-connectstring=mysql_mgmt
+
+# provide connection string for management server host (default port: 1186)
+[ndbd]
+connect-string=mysql_mgmt
+
+# provide connection string for management server host (default port: 1186)
+[ndb_mgm]
+connect-string=mysql_mgmt

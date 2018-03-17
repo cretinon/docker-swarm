@@ -10,8 +10,8 @@ acmeLogging = true
 onDemand = true
 OnHostRule = true
 
-[[acme.domains]]
-  main = "cretinon.fr"
+#[[acme.domains]]
+#  main = "cretinon.fr"
 
 # Redirect all HTTP to HTTPS (why wouldn't you?)
 [entryPoints]

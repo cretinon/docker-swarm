@@ -1,0 +1,18 @@
+version: '3.1'
+
+services:
+
+  owncloud:
+    image: owncloud
+    restart: always
+    ports:
+      - 8099:80
+    networks:
+      - percona
+
+networks:
+  percona:
+    external:
+      name: 
+        percona_backend
+
