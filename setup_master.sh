@@ -44,14 +44,25 @@ docker swarm join-token manager | grep join >> /docker/share/swarm/join_as_manag
 chmod +x /docker/share/swarm/join_as_manager.sh.tmp
 mv /docker/share/swarm/join_as_manager.sh.tmp /docker/share/swarm/join_as_manager.sh
 
+# install registry
+cd /docker/share/git_clone/docker-swarm/conf/images/registry/deploy
+./deploy_me.sh
+cd -
+
 # install portainer
-mkdir -p /docker/share/portainer/data
-docker stack deploy portainer --compose-file /docker/share/git_clone/docker-swarm/portainer.yml
+cd /docker/share/git_clone/docker-swarm/conf/images/portainer/deploy
+./deploy_me.sh
+cd -
+
+# install bind
+cd /docker/share/git_clone/docker-swarm/conf/images/bind
+./build_push_deploy.sh
+cd -
 
 # install traefik
-mkdir -p /docker/share/traefik
-touch /docker/share/traefik/acme.json
-docker stack deploy traefik --compose-file /docker/share/git_clone/docker-swarm/traefik.yml
+#mkdir -p /docker/share/traefik
+#touch /docker/share/traefik/acme.json
+#docker stack deploy traefik --compose-file /docker/share/git_clone/docker-swarm/traefik.yml
 
 # install elk
 #sysctl -w vm.max_map_count=262144
