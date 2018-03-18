@@ -31,6 +31,9 @@ mkdir -p /docker/share/git_clone
 cd /docker/share/git_clone
 git clone https://github.com/cretinon/docker-swarm.git
 
+# enable my rc
+/docker/share/git_clone/docker-swarm/conf/lib/set_bash_aliases.sh
+
 # set docker
 cp /docker/share/git_clone/docker-swarm/docker.service /lib/systemd/system/docker.service
 systemctl daemon-reload

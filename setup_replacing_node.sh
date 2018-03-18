@@ -25,6 +25,9 @@ echo "on master : gluster peer probe IP"
 mount /docker/share
 while [ $? -eq 1 ]; do sleep 10 ; mount /docker/share ; done
 
+# enable my rc
+/docker/share/git_clone/docker-swarm/conf/lib/set_bash_aliases.sh
+
 # set docker
 cp /docker/share/git_clone/docker-swarm/docker.service /lib/systemd/system/docker.service
 systemctl daemon-reload
